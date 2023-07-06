@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     <TextView
-        android:id="@+id/textTitulo"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:text="BIENVENIDO A MI TIENDA"
@@ -17,7 +17,7 @@
         android:id="@+id/imagenGlide"
         android:layout_width="123dp"
         android:layout_height="108dp"
-        android:layout_below="@+id/textTitulo"
+        android:layout_below="@+id/title"
         android:layout_marginStart="136dp"
         android:layout_marginTop="1dp" />
 

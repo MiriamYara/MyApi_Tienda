@@ -9,7 +9,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.myapi_tienda.api.TiendapiService;
+import com.example.myapi_tienda.api.ProductsapiService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    ListaTiendaAdapter listaTiendaAdapter;
+    ListaProductsAdapter listaProductsAdapter;
     Retrofit retrofit;
     ImageView imageView;
-    private static final String TAG = "TIENDA";
+    private static final String TAG = "PRODUCTS";
+    //private ListaProductsAdapter  listaProductsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +34,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.card_recycler_view);
-        listaTiendaAdapter = new ListaTiendaAdapter(this);
-        recyclerView.setAdapter(listaTiendaAdapter);
+        listaProductsAdapter = new ListaProductsAdapter(this);
+        recyclerView.setAdapter(listaProductsAdapter);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://fakestoreapi.com/products/")
+                .baseUrl("https://fakestoreapi.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -51,42 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private void obtenerDatos2() {
-        TiendapiService service = retrofit.create(TiendapiService.class);
-        Call<TiendaRespuesta> tiendaRespuestaCall = service.obtenerListaTienda();
-        tiendaRespuestaCall.enqueue(new Callback<TiendaRespuesta>() {
-            @Override
-            public void onResponse(Call<TiendaRespuesta> call, Response<TiendaRespuesta> response) {
-                if (response.isSuccessful()) {
-                    TiendaRespuesta tiendaRespuesta = response.body();
-                    List<Tienda> listaTienda = tiendaRespuesta.getResults();
 
-                    System.out.println(listaTienda);
-
-                    for (int i = 0; i < listaTienda.size(); i++) {
-                        Tienda t = listaTienda.get(i);
-                        Log.e(TAG, " tienda: " + t.getTitle());
-                        Log.e(TAG, " tienda: " + t.getImage());
-
-                    }
-                    listaTiendaAdapter.add((ArrayList<Tienda>) listaTienda);
-                } else {
-                    Log.e(TAG, " onResponse: " + response.errorBody());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TiendaRespuesta> call, Throwable t) {
-                Log.e(TAG, " onFailure: " + t.getMessage());
-
-            }
-        });
-
-    }
 
     private void setImageView() {
 
-        String url = "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg";
+        String url = "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_.jpg";
         Glide.with(this)
                 .load(url)
                 .error(R.drawable.error)
@@ -96,31 +66,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void obtenerDatos() {
-        TiendapiService service = retrofit.create(TiendapiService.class);
-        Call<TiendaRespuesta> tiendaRespuestaCall = service.obtenerListaTienda();
-        tiendaRespuestaCall.enqueue(new Callback<TiendaRespuesta>() {
+        ProductsapiService service = retrofit.create(ProductsapiService.class);
+        Call<List<Products>> productsRespuestaCall = service.obtenerListaProducts();
+        productsRespuestaCall.enqueue(new Callback<List<Products>>() {
             @Override
-            public void onResponse(Call<TiendaRespuesta> call, Response<TiendaRespuesta> response) {
+            public void onResponse(Call<List<Products>> call, Response<List<Products>> response) {
                 if (response.isSuccessful()) {
-                    TiendaRespuesta tiendaRespuesta = response.body();
-                    List<Tienda> listatienda = tiendaRespuesta.getResults();
-                    for (int i = 0; i < listatienda.size(); i++) {
-                        Tienda t = listatienda.get(i);
-                        Log.e(TAG, "products: " + t.getTitle());
+                    List<Products> productos = response.body();
+                    for (int i = 0; i < productos.size(); i++) {
+                        Products p= productos.get(i);
+                        Log.e(TAG, "products: " + p.getTitle());
                     }
 
-                    listaTiendaAdapter.add((ArrayList<Tienda>) listatienda);
-                } else {
-                    Log.e(TAG, "onResponse: " + response.errorBody());
+                   listaProductsAdapter.add((ArrayList<Products>) productos);
                 }
-
             }
 
             @Override
-            public void onFailure(Call<TiendaRespuesta> call, Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage());
+            public void onFailure(Call<List<Products>> call, Throwable t) {
 
             }
+
+
         });
 
     }
